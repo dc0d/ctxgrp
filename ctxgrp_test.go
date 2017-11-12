@@ -18,7 +18,7 @@ func Test01(t *testing.T) {
 	var c int64
 
 	g := New(octx)
-	_, wg := g.Set()
+	_, wg := g()
 
 	N := 10
 	wg.Add(N)
@@ -43,7 +43,7 @@ func Test02(t *testing.T) {
 	var c int64
 
 	g := New(octx)
-	ctx, wg := g.Set()
+	ctx, wg := g()
 
 	N := 10
 	wg.Add(N)

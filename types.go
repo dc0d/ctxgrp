@@ -12,12 +12,10 @@ type WaitGroup interface {
 	Wait()
 }
 
-// Group provides context for a group of goroutines
-// (a parent context and a WaitGroup for waiting for children to finish)
-type Group interface {
-	// Set is used for membership management & supervision (cancellation)
-	Set() (context.Context, WaitGroup)
-}
+// Group provides context for a group of goroutines,
+// a parent context and a WaitGroup for waiting for children to finish;
+// is used for membership management & supervision (cancellation)
+type Group func() (context.Context, WaitGroup)
 
 // New if ctx is not provided, context.Background() will be used
 func New(ctx ...context.Context) Group {
@@ -27,7 +25,7 @@ func New(ctx ...context.Context) Group {
 	} else {
 		x = context.Background()
 	}
-	return &group{ctx: x, wg: &sync.WaitGroup{}}
+	return (&group{ctx: x, wg: &sync.WaitGroup{}}).elements
 }
 
 type group struct {
@@ -35,6 +33,6 @@ type group struct {
 	wg  *sync.WaitGroup
 }
 
-func (g *group) Set() (context.Context, WaitGroup) {
+func (g *group) elements() (context.Context, WaitGroup) {
 	return g.ctx, g.wg
 }
